@@ -286,7 +286,40 @@ Depends on external API availability.
 
 ---
 
+# ⚠️ Known Limitations
 
+* AI responses depend on external API availability
+* No live weather integration
+* No real-time map navigation
+* Limited user profile customization
+* Mobile application version is not available
+
+---
+
+# 📂 Project Structure
+
+```
+Trao-AI-Travel-Planner
+
+├── backend
+│   ├── routes
+│   ├── controllers
+│   ├── models
+│   └── server.js
+│
+
+├── frontend
+│   ├── src
+│   │   ├── app
+│   │   ├── components
+│   │   ├── utils
+│   │   └── types
+│
+
+└── README.md
+```
+
+---
 
 # 👨‍💻 Author
 
