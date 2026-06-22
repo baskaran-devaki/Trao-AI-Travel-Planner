@@ -14,7 +14,13 @@ const app = express();
 
 app.use(cors({
 
-origin:"https://trao-ai-travel-planner-theta.vercel.app",
+origin:[
+
+"https://trao-ai-travel-planner-theta.vercel.app",
+
+"http://localhost:3000"
+
+],
 
 credentials:true
 
@@ -39,6 +45,7 @@ require("./routes/authRoutes")
 );
 
 
+
 app.use(
 "/api/trips",
 require("./routes/tripRoutes")
@@ -46,7 +53,8 @@ require("./routes/tripRoutes")
 
 
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 
 
 app.listen(PORT,()=>{

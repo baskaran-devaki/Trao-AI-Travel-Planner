@@ -1,19 +1,22 @@
 "use client";
 
 
-import {useState} from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import api from "@/utils/api";
-import {useRouter} from "next/navigation";
 
 
-export default function Login(){
+export default function LoginPage(){
 
 
 const router = useRouter();
 
 
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+const [email,setEmail] = useState("");
+
+const [password,setPassword] = useState("");
+
+const [loading,setLoading] = useState(false);
 
 
 
@@ -23,67 +26,105 @@ const handleLogin = async()=>{
 try{
 
 
-const res = await api.post(
-"/auth/login",
-{
+setLoading(true);
+
+
+
+const response = await api.post("/auth/login",{
+
+
 email,
+
 password
-}
-);
+
+
+});
 
 
 
 localStorage.setItem(
+
 "token",
-res.data.token
+
+response.data.token
+
 );
 
 
 
-alert("Login Success");
+alert("Login Success ✅");
+
 
 
 router.push("/dashboard");
 
 
+
 }
+
 catch(error:any){
 
 
+console.log(error.response?.data);
+
+
+
 alert(
-error.response?.data?.message ||
-"Login failed"
+
+error.response?.data?.message || "Login Failed"
+
 );
 
 
 }
 
-
-};
-
+finally{
 
 
-return (
-
-<div className="min-h-screen flex items-center justify-center">
+setLoading(false);
 
 
-<div className="w-96 p-6 shadow-lg rounded">
+}
 
 
-<h1 className="text-2xl font-bold mb-5">
+}
+
+
+
+
+
+return(
+
+
+<div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+
+<div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+
+
+<h1 className="text-3xl font-bold text-center mb-6">
+
 Login
+
 </h1>
 
 
 
 <input
 
-className="border p-2 w-full mb-3"
+
+type="email"
 
 placeholder="Email"
 
+className="w-full border p-3 rounded mb-4"
+
+
+value={email}
+
+
 onChange={(e)=>setEmail(e.target.value)}
+
 
 />
 
@@ -91,36 +132,79 @@ onChange={(e)=>setEmail(e.target.value)}
 
 <input
 
-className="border p-2 w-full mb-3"
-
-placeholder="Password"
 
 type="password"
 
+placeholder="Password"
+
+
+className="w-full border p-3 rounded mb-6"
+
+
+value={password}
+
+
 onChange={(e)=>setPassword(e.target.value)}
+
 
 />
 
 
 
+
 <button
 
-className="bg-black text-white px-4 py-2 w-full"
 
 onClick={handleLogin}
 
+
+disabled={loading}
+
+
+className="w-full bg-black text-white p-3 rounded"
+
+
 >
 
-Login
+
+{loading ? "Logging..." : "Login"}
+
 
 </button>
 
 
 
+<p className="text-center mt-5">
+
+
+Don't have account?
+
+
+<button
+
+
+className="text-blue-600 ml-2"
+
+
+onClick={()=>router.push("/register")}
+
+
+>
+
+Register
+
+</button>
+
+
+</p>
+
+
+
 </div>
 
 
 </div>
+
 
 );
 
