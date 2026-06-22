@@ -65,6 +65,3 @@ The application uses AI to generate smart travel plans and allows users to manag
 
 ---
 
-
-# 📂 Project Structure
-
