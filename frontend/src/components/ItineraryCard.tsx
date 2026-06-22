@@ -1,89 +1,290 @@
-type Trip = {
+"use client";
 
-destination:string;
+import {useState} from "react";
 
-days:number;
 
-budget:string;
+export default function ItineraryCard({trip}: {trip:any}){
 
-itinerary:any;
+
+const formatItinerary = ()=>{
+
+
+if(!trip.itinerary) return {};
+
+let data = trip.itinerary;
+
+
+
+// string format handle
+
+if(typeof data === "string"){
+
+
+return {
+
+"AI Generated Plan":[data]
+
+};
+
+
+}
+
+
+
+const formatted:any={};
+
+
+
+Object.keys(data).forEach((day)=>{
+
+
+const value=data[day];
+
+
+
+if(Array.isArray(value)){
+
+
+formatted[day]=value;
+
+
+}
+
+
+
+else if(typeof value==="string"){
+
+
+formatted[day]=[value];
+
+
+}
+
+
+
+else if(typeof value==="object"){
+
+
+formatted[day]=Object.values(value);
+
+
+}
+
+
+});
+
+
+return formatted;
+
+
+};
+
+
+const [itinerary,setItinerary]=useState(formatItinerary());
+
+const cleanText = (text:string)=>{
+
+
+return text
+
+.replace(/\*\*/g,"")
+
+.replace(/\*/g,"")
+
+.replace(/\+/g,"")
+
+.trim();
+
 
 };
 
 
 
-export default function ItineraryCard(
+const removeActivity=(day:string,index:number)=>{
 
-{
-trip
-}:{
-trip:Trip
+
+setItinerary({
+
+...itinerary,
+
+[day]:
+
+itinerary[day].filter(
+(_:any,i:number)=>i!==index
+)
+
+});
+
+
+};
+
+
+
+const addActivity=(day:string)=>{
+
+
+const value = prompt(
+"Enter activity"
+);
+
+
+if(value){
+
+
+setItinerary({
+
+...itinerary,
+
+[day]:[
+
+...itinerary[day],
+
+value
+
+]
+
+});
+
 
 }
 
-){
 
-
-
-const itineraryText =
-
-typeof trip.itinerary === "object"
-
-?
-
-JSON.stringify(
-trip.itinerary,
-null,
-2
-)
-
-:
-
-trip.itinerary;
+};
 
 
 
 return (
 
-<div className="border rounded-xl p-5 shadow-md mb-5 bg-white">
+<div className="bg-white border rounded-2xl p-6 shadow-md mb-6">
 
 
-<h2 className="text-xl font-bold">
+<div className="flex justify-between">
+
+
+<h2 className="text-2xl font-bold">
 
 📍 {trip.destination}
 
 </h2>
 
 
-
-<p>
-🗓 Days: {trip.days}
-</p>
+</div>
 
 
-<p>
+
+<p className="text-gray-500 mt-2">
+
 💰 Budget: {trip.budget}
+
 </p>
 
 
 
-<div className="mt-5">
+<p className="text-gray-500">
+
+🗓 Days: {trip.days}
+
+</p>
 
 
-<h3 className="font-bold">
 
-🤖 AI Generated Plan
+
+<div className="mt-5 bg-gray-50 p-5 rounded-xl">
+
+
+<h3 className="font-bold text-xl">
+
+🤖 AI Itinerary
 
 </h3>
 
 
 
-<p className="whitespace-pre-line mt-2">
+{
 
-{itineraryText}
+Object.keys(itinerary).map((day)=>(
 
-</p>
 
+<div
+
+key={day}
+
+className="mt-4 bg-gray-50 p-4 rounded-xl"
+
+>
+
+
+<h4 className="font-bold mb-3">
+
+{day}
+
+</h4>
+
+
+
+{
+
+Array.isArray(itinerary[day])
+
+&&
+
+itinerary[day].map(
+
+(activity:string,index:number)=>(
+
+
+<div
+
+key={index}
+
+className="flex justify-between items-center border-b py-2"
+
+>
+
+
+<span>
+
+<div className="whitespace-pre-line leading-7 text-gray-700">
+
+{cleanText(activity)}
+
+</div>
+
+</span>
+
+
+
+</div>
+
+
+)
+
+)
+
+
+}
+
+
+
+<button
+
+onClick={()=>addActivity(day)}
+
+className="mt-3 bg-black text-white px-4 py-2 rounded"
+
+>
+
+➕ Add Activity
+
+</button>
+
+</div>
+
+
+))
+
+
+}
 
 
 </div>
@@ -91,6 +292,7 @@ return (
 
 
 </div>
+
 
 );
 

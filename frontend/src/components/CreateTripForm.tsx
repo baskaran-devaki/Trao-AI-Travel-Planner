@@ -5,44 +5,66 @@ import {useState} from "react";
 import api from "@/utils/api";
 
 
-export default function CreateTripForm(){
+export default function CreateTripForm({
 
+setLatestTrip
 
-const [destination,setDestination]=useState("");
-const [days,setDays]=useState("");
-const [budget,setBudget]=useState("");
-
-const [result,setResult]=useState("");
+}:any){
 
 
 
-const createTrip = async()=>{
+const [form,setForm]=useState({
+
+destination:"",
+
+days:"",
+
+budget:"",
+
+interests:""
+
+});
+
+
+const handleChange=(e:any)=>{
+
+
+setForm({
+
+...form,
+
+[e.target.name]:e.target.value
+
+});
+
+
+};
+
+
+
+const createTrip=async()=>{
 
 
 try{
 
 
-const res = await api.post(
-"/trips/create",
-{
-destination,
-days,
-budget
-}
-);
+const res = await api.post("/trips/create", form);
 
 
-setResult(
-res.data.trip.itinerary
-);
+console.log("CREATED TRIP:", res.data);
+
+
+
+setLatestTrip(res.data.trip || res.data);
 
 
 }
+
 catch(error){
 
+console.log(error);
 
 alert("Trip creation failed");
-
 
 }
 
@@ -53,68 +75,130 @@ alert("Trip creation failed");
 
 return (
 
-<div className="p-6">
+
+<div className="max-w-xl mx-auto border rounded-xl p-6 shadow-md">
 
 
-<h2 className="text-xl font-bold mb-4">
-Create AI Trip Plan
+<h2 className="text-2xl font-bold mb-5">
+
+Plan Your Trip ✈️
+
 </h2>
 
 
+
 <input
-className="border p-2 block mb-3 w-full"
+
+name="destination"
+
 placeholder="Destination"
-onChange={(e)=>setDestination(e.target.value)}
+
+value={form.destination}
+
+onChange={handleChange}
+
+className="w-full border p-3 rounded mb-4"
+
 />
 
 
+
 <input
-className="border p-2 block mb-3 w-full"
-placeholder="Days"
-onChange={(e)=>setDays(e.target.value)}
+
+name="days"
+
+type="number"
+
+placeholder="Number of Days"
+
+value={form.days}
+
+onChange={handleChange}
+
+className="w-full border p-3 rounded mb-4"
+
 />
 
 
+
+<select
+
+name="budget"
+
+value={form.budget}
+
+onChange={handleChange}
+
+className="w-full border p-3 rounded mb-4"
+
+>
+
+
+<option value="">
+
+Select Budget
+
+</option>
+
+
+<option>
+
+Low
+
+</option>
+
+
+<option>
+
+Medium
+
+</option>
+
+
+<option>
+
+High
+
+</option>
+
+
+</select>
+
+
+
+
 <input
-className="border p-2 block mb-3 w-full"
-placeholder="Budget"
-onChange={(e)=>setBudget(e.target.value)}
+
+name="interests"
+
+placeholder="Interests (Food, Culture, Adventure, Shopping)"
+
+value={form.interests}
+
+onChange={handleChange}
+
+className="w-full border p-3 rounded mb-5"
+
 />
 
 
 
 <button
 
-className="bg-black text-white px-4 py-2"
-
 onClick={createTrip}
+
+className="bg-black text-white px-6 py-3 rounded w-full"
 
 >
 
-Generate Plan
+Create
 
 </button>
 
 
 
-{result &&
-
-<div className="mt-5 border p-4">
-
-<h3 className="font-bold">
-AI Itinerary
-</h3>
-
-<p className="whitespace-pre-line">
-{result}
-</p>
-
 </div>
 
-}
-
-
-</div>
 
 );
 

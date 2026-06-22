@@ -1,64 +1,56 @@
 "use client";
 
 
-import { useEffect, useState } from "react";
+import {useEffect,useState} from "react";
 
 import api from "@/utils/api";
 
-import Navbar from "@/components/Navbar";
 import CreateTripForm from "@/components/CreateTripForm";
+
 import ItineraryCard from "@/components/ItineraryCard";
+
+import {useRouter} from "next/navigation";
+
 
 
 export default function Dashboard(){
 
 
-const [trips,setTrips] = useState<any[]>([]);
+const router = useRouter();
 
 
 
-const getTrips = async()=>{
+
+const [latestTrip,setLatestTrip] = useState<any>(null);
 
 
-try{
 
-const res = await api.get("/trips");
-
-setTrips(res.data.trips || []);
+const logout=()=>{
 
 
-}
-catch(error){
+localStorage.removeItem("token");
 
-console.log(error);
 
-}
+router.push("/login");
 
 
 };
 
 
 
-useEffect(()=>{
-
-getTrips();
-
-},[]);
-
 
 
 return (
 
-<main className="min-h-screen">
+
+<div className="max-w-5xl mx-auto p-6">
 
 
-<Navbar />
+
+<div className="flex justify-between items-center mb-8">
 
 
-<div className="p-6">
-
-
-<h1 className="text-3xl font-bold mb-6">
+<h1 className="text-3xl font-bold">
 
 ✈️ Trao AI Travel Planner
 
@@ -66,40 +58,67 @@ return (
 
 
 
-<CreateTripForm />
+<button
 
+onClick={logout}
 
+className="bg-red-500 text-white px-4 py-2 rounded"
 
-<h2 className="text-2xl font-bold mt-8 mb-5">
+>
 
-My Trips
+Logout
 
-</h2>
-
-
-
-{
-
-trips.map((trip,index)=>(
-
-<ItineraryCard
-
-key={index}
-
-trip={trip}
-
-/>
-
-))
-
-}
-
+</button>
 
 
 </div>
 
 
-</main>
+
+
+
+{/* CREATE */}
+
+<CreateTripForm
+
+setLatestTrip={setLatestTrip}
+
+/>
+
+
+
+
+
+{/* AI RESULT */}
+
+
+{
+
+latestTrip &&
+
+
+<div className="mt-10">
+
+
+<h2 className="text-2xl font-bold mb-4">
+
+🤖 AI Generated Trip
+
+</h2>
+
+
+<ItineraryCard
+
+trip={latestTrip}
+
+/>
+
+
+</div>
+
+}
+
+</div>
 
 
 );
