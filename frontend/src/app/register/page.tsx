@@ -75,7 +75,7 @@ export default function Register() {
 
             <p className="text-gray-500 mt-2">
 
-              Join Trao AI Travel Planner
+              Join Baski AI Travel Planner
 
             </p>
 
