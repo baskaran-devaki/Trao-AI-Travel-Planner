@@ -1,206 +1,226 @@
 "use client";
 
-
-import {useState} from "react";
+import { useState } from "react";
 import api from "@/utils/api";
-
 
 export default function CreateTripForm({
 
-setLatestTrip
+  setLatestTrip
 
-}:any){
+}: any) {
 
+  const [form, setForm] = useState({
 
+    destination: "",
 
-const [form,setForm]=useState({
+    days: "",
 
-destination:"",
+    budget: "",
 
-days:"",
+    interests: ""
 
-budget:"",
+  });
 
-interests:""
+  const handleChange = (e: any) => {
 
-});
+    setForm({
 
+      ...form,
 
-const handleChange=(e:any)=>{
+      [e.target.name]: e.target.value
 
+    });
 
-setForm({
+  };
 
-...form,
+  const createTrip = async () => {
 
-[e.target.name]:e.target.value
+    try {
 
-});
+      const res = await api.post("/trips/create", form);
 
+      console.log("CREATED TRIP:", res.data);
 
-};
+      setLatestTrip(res.data.trip || res.data);
 
+    }
 
+    catch (error) {
 
-const createTrip=async()=>{
+      console.log(error);
 
+      alert("Trip creation failed");
 
-try{
+    }
 
+  };
 
-const res = await api.post("/trips/create", form);
+  return (
 
+    <div className="max-w-3xl mx-auto rounded-3xl bg-white shadow-2xl border border-gray-200 p-8">
 
-console.log("CREATED TRIP:", res.data);
+      <div className="text-center mb-8">
 
+        <div className="text-6xl mb-4">
 
+          🧳
 
-setLatestTrip(res.data.trip || res.data);
+        </div>
 
+        <h2 className="text-3xl font-extrabold text-gray-800">
 
-}
+          Plan Your Trip ✈️
 
-catch(error){
+        </h2>
 
-console.log(error);
+        <p className="text-gray-500 mt-3">
 
-alert("Trip creation failed");
+          Enter your travel details and let AI create a personalized itinerary.
 
-}
+        </p>
 
+      </div>
 
-};
+      <div className="grid md:grid-cols-2 gap-5">
 
+        <div>
 
+          <label className="block mb-2 font-semibold text-gray-700">
 
-return (
+            Destination
 
+          </label>
 
-<div className="max-w-xl mx-auto border rounded-xl p-6 shadow-md">
+          <input
 
+            name="destination"
 
-<h2 className="text-2xl font-bold mb-5">
+            placeholder="Destination"
 
-Plan Your Trip ✈️
+            value={form.destination}
 
-</h2>
+            onChange={handleChange}
 
+            className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
+          />
 
-<input
+        </div>
 
-name="destination"
+        <div>
 
-placeholder="Destination"
+          <label className="block mb-2 font-semibold text-gray-700">
 
-value={form.destination}
+            Number of Days
 
-onChange={handleChange}
+          </label>
 
-className="w-full border p-3 rounded mb-4"
+          <input
 
-/>
+            name="days"
 
+            type="number"
 
+            placeholder="Number of Days"
 
-<input
+            value={form.days}
 
-name="days"
+            onChange={handleChange}
 
-type="number"
+            className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
-placeholder="Number of Days"
+          />
 
-value={form.days}
+        </div>
 
-onChange={handleChange}
+      </div>
 
-className="w-full border p-3 rounded mb-4"
+      <div className="mt-5">
 
-/>
+        <label className="block mb-2 font-semibold text-gray-700">
 
+          Budget
 
+        </label>
 
-<select
+        <select
 
-name="budget"
+          name="budget"
 
-value={form.budget}
+          value={form.budget}
 
-onChange={handleChange}
+          onChange={handleChange}
 
-className="w-full border p-3 rounded mb-4"
+          className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
->
+        >
 
+          <option value="">
 
-<option value="">
+            Select Budget
 
-Select Budget
+          </option>
 
-</option>
+          <option>
 
+            Low
 
-<option>
+          </option>
 
-Low
+          <option>
 
-</option>
+            Medium
 
+          </option>
 
-<option>
+          <option>
 
-Medium
+            High
 
-</option>
+          </option>
 
+        </select>
 
-<option>
+      </div>
 
-High
+      <div className="mt-5">
 
-</option>
+        <label className="block mb-2 font-semibold text-gray-700">
 
+          Interests
 
-</select>
+        </label>
 
+        <input
 
+          name="interests"
 
+          placeholder="Interests (Food, Culture, Adventure, Shopping)"
 
-<input
+          value={form.interests}
 
-name="interests"
+          onChange={handleChange}
 
-placeholder="Interests (Food, Culture, Adventure, Shopping)"
+          className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
-value={form.interests}
+        />
 
-onChange={handleChange}
+      </div>
 
-className="w-full border p-3 rounded mb-5"
+      <button
 
-/>
+        onClick={createTrip}
 
+        className="w-full mt-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-4 text-white text-lg font-semibold shadow-lg hover:scale-[1.02] hover:shadow-xl transition duration-300"
 
+      >
 
-<button
+        ✨ Create
 
-onClick={createTrip}
+      </button>
 
-className="bg-black text-white px-6 py-3 rounded w-full"
+    </div>
 
->
-
-Create
-
-</button>
-
-
-
-</div>
-
-
-);
-
+  );
 
 }
