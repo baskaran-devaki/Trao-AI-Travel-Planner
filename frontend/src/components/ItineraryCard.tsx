@@ -1,262 +1,415 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
 
 export default function ItineraryCard({ trip }: { trip: any }) {
 
-  const formatItinerary = () => {
+  const parsedData = useMemo(() => {
 
-    if (!trip.itinerary) return {};
+    const itineraryText = trip?.itinerary || "";
 
-    let data = trip.itinerary;
+    const result = {
+      days: [] as any[],
+      budget: [] as string[],
+      travelTips: [] as string[],
+    };
 
-    if (typeof data === "string") {
+    if (!itineraryText) return result;
 
-      return {
+    // Split by Day
+    const dayMatches = itineraryText.match(
+      /\*\*Day\s+\d+[\s\S]*?(?=\*\*Day\s+\d+|\*\*Budget Breakdown|\*\*Budget|\Z)/gi
+    );
 
-        "AI Generated Plan": [data]
+    if (dayMatches) {
 
-      };
+      dayMatches.forEach((section) => {
 
-    }
+        const title =
+          section.match(/\*\*(Day\s+\d+.*?)\*\*/)?.[1] || "Day";
 
-    const formatted: any = {};
+        let content = section
+          .replace(/\*\*Day\s+\d+.*?\*\*/i, "")
+          .replace(/\*\*/g, "")
+          .trim();
 
-    Object.keys(data).forEach((day) => {
+        const lines = content
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line.length);
 
-      const value = data[day];
-
-      if (Array.isArray(value)) {
-
-        formatted[day] = value;
-
-      }
-
-      else if (typeof value === "string") {
-
-        formatted[day] = [value];
-
-      }
-
-      else if (typeof value === "object") {
-
-        formatted[day] = Object.values(value);
-
-      }
-
-    });
-
-    return formatted;
-
-  };
-
-  const [itinerary, setItinerary] = useState(formatItinerary());
-
-  const cleanText = (text: string) => {
-
-    return text
-
-      .replace(/\*\*/g, "")
-
-      .replace(/\*/g, "")
-
-      .replace(/\+/g, "")
-
-      .trim();
-
-  };
-
-  const removeActivity = (day: string, index: number) => {
-
-    setItinerary({
-
-      ...itinerary,
-
-      [day]:
-
-        itinerary[day].filter(
-
-          (_: any, i: number) => i !== index
-
-        )
-
-    });
-
-  };
-
-  const addActivity = (day: string) => {
-
-    const value = prompt("Enter activity");
-
-    if (value) {
-
-      setItinerary({
-
-        ...itinerary,
-
-        [day]: [
-
-          ...itinerary[day],
-
-          value
-
-        ]
+        result.days.push({
+          title,
+          activities: lines,
+        });
 
       });
 
     }
 
-  };
+    // Budget
+
+    const budgetMatch = itineraryText.match(
+      /\*\*Budget Breakdown[\s\S]*/i
+    );
+
+    if (budgetMatch) {
+
+      const budgetLines = budgetMatch[0]
+        .replace(/\*\*/g, "")
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean);
+
+      budgetLines.forEach((item) => {
+
+        if (
+          item.startsWith("-") ||
+          item.includes("Accommodation") ||
+          item.includes("Food") ||
+          item.includes("Transportation") ||
+          item.includes("Activities") ||
+          item.includes("Total")
+        ) {
+
+          result.budget.push(item.replace("-", "").trim());
+
+        }
+
+      });
+
+    }
+
+    // Travel Tips
+
+    const tipRegex = /Travel Tip:(.*)|Budget Tip:(.*)/gi;
+
+    let match;
+
+    while ((match = tipRegex.exec(itineraryText)) !== null) {
+
+      const tip = (match[1] || match[2])?.trim();
+
+      if (tip) {
+
+        result.travelTips.push(tip);
+
+      }
+
+    }
+
+    return result;
+
+  }, [trip]);
 
   return (
 
-    <div className="rounded-3xl bg-white shadow-2xl border border-gray-200 overflow-hidden">
+    <div className="max-w-7xl mx-auto px-6 py-10">
 
-      {/* Header */}
+      {/* Hero */}
 
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white p-8">
+      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-r from-sky-600 via-indigo-600 to-cyan-500 text-white shadow-2xl">
 
-        <h2 className="text-4xl font-bold">
+        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-          📍 {trip.destination}
+        <div className="absolute left-0 bottom-0 h-52 w-52 rounded-full bg-cyan-300/20 blur-3xl" />
 
-        </h2>
+        <div className="relative p-10 lg:p-14">
 
-        <div className="flex flex-wrap gap-6 mt-5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
 
-          <div className="bg-white/20 px-5 py-3 rounded-xl">
+            <div>
 
-            💰 Budget : <b>{trip.budget}</b>
+              <span className="inline-flex rounded-full bg-white/20 px-4 py-2 text-sm font-semibold backdrop-blur">
+
+                ✈️ AI Generated Itinerary
+
+              </span>
+
+              <h1 className="mt-5 text-5xl font-extrabold tracking-tight">
+
+                📍 {trip.destination}
+
+              </h1>
+
+              <p className="mt-4 max-w-2xl text-lg text-blue-100 leading-8">
+
+                Your personalized AI travel itinerary is ready. Explore every
+                destination with a beautiful day-wise travel plan.
+
+              </p>
+
+            </div>
+
+            <div className="text-[120px] lg:text-[160px] opacity-90">
+
+              🌍
+
+            </div>
 
           </div>
 
-          <div className="bg-white/20 px-5 py-3 rounded-xl">
+          {/* Info Cards */}
 
-            🗓 Days : <b>{trip.days}</b>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
 
-          </div>
+            <div className="rounded-2xl bg-white/15 backdrop-blur-lg border border-white/20 p-6">
 
-        </div>
+              <div className="text-sm uppercase tracking-wider text-blue-100">
 
-      </div>
-
-      {/* AI */}
-
-      <div className="p-8">
-
-        <h3 className="text-3xl font-bold mb-8">
-
-          🤖 AI Itinerary
-
-        </h3>
-
-        <div className="space-y-8">
-
-          {
-
-            Object.keys(itinerary).map((day) => (
-
-              <div
-
-                key={day}
-
-                className="rounded-2xl border border-gray-200 bg-slate-50 p-6 shadow-sm"
-
-              >
-
-                <div className="flex items-center justify-between mb-5">
-
-                  <h4 className="text-2xl font-bold text-blue-700">
-
-                    {day}
-
-                  </h4>
-
-                  <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-
-                    Travel Plan
-
-                  </span>
-
-                </div>
-
-                <div className="space-y-4">
-
-                  {
-
-                    Array.isArray(itinerary[day]) &&
-
-                    itinerary[day].map(
-
-                      (activity: string, index: number) => (
-
-                        <div
-
-                          key={index}
-
-                          className="flex items-start gap-4 rounded-xl bg-white p-5 shadow border"
-
-                        >
-
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-bold">
-
-                            {index + 1}
-
-                          </div>
-
-                          <div className="flex-1">
-
-                            <div className="whitespace-pre-line leading-8 text-gray-700">
-
-                              {cleanText(activity)}
-
-                            </div>
-
-                          </div>
-
-                          <button
-
-                            onClick={() => removeActivity(day, index)}
-
-                            className="rounded-lg bg-red-500 px-3 py-2 text-white hover:bg-red-600 transition"
-
-                          >
-
-                            ✕
-
-                          </button>
-
-                        </div>
-
-                      )
-
-                    )
-
-                  }
-
-                </div>
-
-                <button
-
-                  onClick={() => addActivity(day)}
-
-                  className="mt-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-white font-semibold hover:scale-105 transition"
-
-                >
-
-                  ➕ Add Activity
-
-                </button>
+                Budget
 
               </div>
 
-            ))
+              <div className="mt-3 text-3xl font-bold">
 
-          }
+                💰 {trip.budget}
+
+              </div>
+
+            </div>
+
+            <div className="rounded-2xl bg-white/15 backdrop-blur-lg border border-white/20 p-6">
+
+              <div className="text-sm uppercase tracking-wider text-blue-100">
+
+                Duration
+
+              </div>
+
+              <div className="mt-3 text-3xl font-bold">
+
+                🗓 {trip.days} Days
+
+              </div>
+
+            </div>
+
+            <div className="rounded-2xl bg-white/15 backdrop-blur-lg border border-white/20 p-6">
+
+              <div className="text-sm uppercase tracking-wider text-blue-100">
+
+                Generated By
+
+              </div>
+
+              <div className="mt-3 text-3xl font-bold">
+
+                🤖 AI Planner
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
       </div>
+
+      {/* Day Wise Cards */}
+
+      <div className="mt-12 space-y-8"> 
+        {
+  parsedData.days.map((day: any, dayIndex: number) => {
+
+    const colors = [
+      "from-blue-500 to-cyan-500",
+      "from-purple-500 to-pink-500",
+      "from-green-500 to-emerald-500",
+      "from-orange-500 to-amber-500",
+      "from-rose-500 to-red-500",
+    ];
+
+    return (
+
+      <div
+        key={dayIndex}
+        className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+      >
+
+        {/* Day Header */}
+
+        <div
+          className={`bg-gradient-to-r ${colors[dayIndex % colors.length]} px-8 py-6 text-white`}
+        >
+
+          <div className="flex items-center justify-between">
+
+            <h2 className="text-3xl font-bold">
+
+              🌍 {day.title}
+
+            </h2>
+
+            <div className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold">
+
+              Day {dayIndex + 1}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Activities */}
+
+        <div className="p-8">
+
+          <div className="space-y-5">
+
+            {
+
+              day.activities.map((activity: string, index: number) => (
+
+                <div
+                  key={index}
+                  className="flex items-start gap-5"
+                >
+
+                  {/* Timeline */}
+
+                  <div className="flex flex-col items-center">
+
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white font-bold shadow-lg">
+
+                      {index + 1}
+
+                    </div>
+
+                    {
+
+                      index !== day.activities.length - 1 &&
+
+                      <div className="h-16 w-1 bg-blue-200 rounded-full mt-2"></div>
+
+                    }
+
+                  </div>
+
+                  {/* Card */}
+
+                  <div className="flex-1 rounded-2xl border border-gray-200 bg-slate-50 p-5 hover:bg-blue-50 transition">
+
+                    <p className="leading-8 text-gray-700 whitespace-pre-line">
+
+                      {
+
+                        activity
+
+                          .replace(/\*\*/g, "")
+
+                          .replace(/\*/g, "")
+
+                          .replace(/\+/g, "")
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+
+  })
+}
+              </div>
+
+      {/* Budget Summary */}
+
+      {
+        parsedData.budget.length > 0 && (
+
+          <div className="mt-12 rounded-3xl bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 p-8 text-white shadow-2xl">
+
+            <h2 className="text-3xl font-bold mb-8">
+
+              💰 Budget Summary
+
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-2">
+
+              {
+                parsedData.budget.map((item: string, index: number) => (
+
+                  <div
+                    key={index}
+                    className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 p-5"
+                  >
+
+                    {item}
+
+                  </div>
+
+                ))
+              }
+
+            </div>
+
+          </div>
+
+        )
+      }
+
+      {/* Travel Tips */}
+
+      {
+        parsedData.travelTips.length > 0 && (
+
+          <div className="mt-12 rounded-3xl border bg-yellow-50 p-8 shadow-xl">
+
+            <h2 className="text-3xl font-bold text-yellow-700 mb-6">
+
+              💡 Travel Tips
+
+            </h2>
+
+            <div className="space-y-4">
+
+              {
+                parsedData.travelTips.map((tip: string, index: number) => (
+
+                  <div
+                    key={index}
+                    className="flex gap-4 rounded-xl bg-white p-5 shadow"
+                  >
+
+                    <div className="text-2xl">
+
+                      ✅
+
+                    </div>
+
+                    <p className="leading-8 text-gray-700">
+
+                      {tip}
+
+                    </p>
+
+                  </div>
+
+                ))
+              }
+
+            </div>
+
+          </div>
+
+        )
+      }
 
     </div>
 
