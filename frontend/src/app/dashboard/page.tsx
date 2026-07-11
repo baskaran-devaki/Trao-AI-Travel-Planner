@@ -1,125 +1,177 @@
 "use client";
 
-
-import {useEffect,useState} from "react";
-
-import api from "@/utils/api";
-
+import { useState } from "react";
 import CreateTripForm from "@/components/CreateTripForm";
-
 import ItineraryCard from "@/components/ItineraryCard";
+import { useRouter } from "next/navigation";
 
-import {useRouter} from "next/navigation";
+export default function Dashboard() {
 
+  const router = useRouter();
 
+  const [latestTrip, setLatestTrip] = useState<any>(null);
 
-export default function Dashboard(){
+  const logout = () => {
 
+    localStorage.removeItem("token");
 
-const router = useRouter();
+    router.push("/");
 
+  };
 
+  return (
 
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-100">
 
-const [latestTrip,setLatestTrip] = useState<any>(null);
+      {/* Header */}
 
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
 
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
 
-const logout=()=>{
+          <div>
 
+            <h1 className="text-3xl font-extrabold text-gray-900">
 
-localStorage.removeItem("token");
+              ✈️ Baski AI Travel Planner
 
+            </h1>
 
-router.push("/");
+            <p className="text-gray-500 mt-1">
 
+              Create smart AI powered travel plans.
 
-};
+            </p>
 
+          </div>
 
+          <button
 
-return (
+            onClick={logout}
 
+            className="rounded-xl bg-red-500 px-6 py-3 text-white font-semibold shadow-lg hover:bg-red-600 hover:scale-105 transition-all duration-300"
 
-<div className="max-w-5xl mx-auto p-6">
+          >
 
+            Logout
 
+          </button>
 
-<div className="flex justify-between items-center mb-8">
+        </div>
 
+      </header>
 
-<h1 className="text-3xl font-bold">
+      {/* Main */}
 
-✈️ Trao AI Travel Planner
+      <div className="max-w-7xl mx-auto px-6 py-10">
 
-</h1>
+        {/* Welcome Banner */}
 
+        <div className="mb-10 overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white shadow-2xl">
 
+          <div className="flex flex-col lg:flex-row items-center justify-between p-10">
 
-<button
+            <div>
 
-onClick={logout}
+              <h2 className="text-4xl font-bold">
 
-className="bg-red-500 text-white px-4 py-2 rounded"
+                🌍 Plan Your Next Adventure
 
->
+              </h2>
 
-Logout
+              <p className="mt-4 max-w-2xl text-blue-100 leading-8">
 
-</button>
+                Generate personalized AI itineraries, discover amazing places,
+                manage your travel plans, and enjoy stress-free trips.
 
+              </p>
 
-</div>
+            </div>
 
+            <div className="text-[120px] mt-6 lg:mt-0">
 
+              ✈️
 
+            </div>
 
+          </div>
 
-{/* CREATE */}
+        </div>
 
-<CreateTripForm
+        {/* Create Trip */}
 
-setLatestTrip={setLatestTrip}
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8">
 
-/>
+          <div className="mb-8">
 
+            <h2 className="text-3xl font-bold text-gray-900">
 
+              🧳 Create New Trip
 
+            </h2>
 
+            <p className="text-gray-500 mt-2">
 
-{/* AI RESULT */}
+              Fill in the details and let AI generate your perfect itinerary.
 
+            </p>
 
-{
+          </div>
 
-latestTrip &&
+          <CreateTripForm
 
+            setLatestTrip={setLatestTrip}
 
-<div className="mt-10">
+          />
 
+        </div>
 
-<h2 className="text-2xl font-bold mb-4">
+        {/* AI Result */}
 
-🤖 AI Generated Trip
+        {
 
-</h2>
+          latestTrip &&
 
+          <div className="mt-10">
 
-<ItineraryCard
+            <div className="flex items-center justify-between mb-6">
 
-trip={latestTrip}
+              <div>
 
-/>
+                <h2 className="text-3xl font-bold">
 
+                  🤖 AI Generated Trip
 
-</div>
+                </h2>
 
-}
+                <p className="text-gray-500 mt-2">
 
-</div>
+                  Your personalized travel itinerary is ready.
 
+                </p>
 
-);
+              </div>
 
+            </div>
+
+            <div className="rounded-3xl bg-white border border-gray-200 shadow-2xl p-8">
+
+              <ItineraryCard
+
+                trip={latestTrip}
+
+              />
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  );
 
 }
