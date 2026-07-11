@@ -1,212 +1,171 @@
 "use client";
 
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/utils/api";
 
+export default function LoginPage() {
 
-export default function LoginPage(){
+  const router = useRouter();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
+  const handleLogin = async () => {
 
-const [email,setEmail] = useState("");
+    try {
 
-const [password,setPassword] = useState("");
+      setLoading(true);
 
-const [loading,setLoading] = useState(false);
+      const response = await api.post("/auth/login", {
 
+        email,
 
+        password
 
-const handleLogin = async()=>{
+      });
 
+      localStorage.setItem(
+        "token",
+        response.data.token
+      );
 
-try{
+      alert("Login Success ✅");
 
+      router.push("/dashboard");
 
-setLoading(true);
+    }
 
+    catch (error: any) {
 
+      console.log(error.response?.data);
 
-const response = await api.post("/auth/login",{
+      alert(
 
+        error.response?.data?.message || "Login Failed"
 
-email,
+      );
 
-password
+    }
 
+    finally {
 
-});
+      setLoading(false);
 
+    }
 
+  };
 
-localStorage.setItem(
 
-"token",
 
-response.data.token
+  return (
 
-);
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-100 to-indigo-200 flex items-center justify-center px-5">
 
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600')] bg-cover bg-center opacity-20"></div>
 
+      <div className="relative w-full max-w-md">
 
-alert("Login Success ✅");
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-white">
 
+          <div className="text-center mb-8">
 
+            <div className="text-6xl mb-3">
 
-router.push("/dashboard");
+              ✈️
 
+            </div>
 
+            <h1 className="text-4xl font-extrabold text-gray-800">
 
-}
+              Login
 
-catch(error:any){
+            </h1>
 
+            <p className="text-gray-500 mt-2">
 
-console.log(error.response?.data);
+              Welcome back to Trao AI Travel Planner
 
+            </p>
 
+          </div>
 
-alert(
+          <div className="space-y-5">
 
-error.response?.data?.message || "Login Failed"
+            <input
 
-);
+              type="email"
 
+              placeholder="Email"
 
-}
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
-finally{
+              value={email}
 
+              onChange={(e) => setEmail(e.target.value)}
 
-setLoading(false);
+            />
 
+            <input
 
-}
+              type="password"
 
+              placeholder="Password"
 
-}
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
 
+              value={password}
 
+              onChange={(e) => setPassword(e.target.value)}
 
+            />
 
+            <button
 
-return(
+              onClick={handleLogin}
 
+              disabled={loading}
 
-<div className="min-h-screen flex items-center justify-center bg-gray-100">
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:scale-[1.02] hover:shadow-xl transition duration-300"
 
+            >
 
-<div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+              {loading ? "Logging..." : "Login"}
 
+            </button>
 
-<h1 className="text-3xl font-bold text-center mb-6">
+          </div>
 
-Login
+          <div className="mt-8 text-center">
 
-</h1>
+            <p className="text-gray-600">
 
+              Don't have account?
 
+            </p>
 
-<input
+            <button
 
+              className="mt-2 font-semibold text-blue-600 hover:text-blue-800 transition"
 
-type="email"
+              onClick={() => router.push("/register")}
 
-placeholder="Email"
+            >
 
-className="w-full border p-3 rounded mb-4"
+              Register
 
+            </button>
 
-value={email}
+          </div>
 
+        </div>
 
-onChange={(e)=>setEmail(e.target.value)}
+      </div>
 
+    </div>
 
-/>
-
-
-
-<input
-
-
-type="password"
-
-placeholder="Password"
-
-
-className="w-full border p-3 rounded mb-6"
-
-
-value={password}
-
-
-onChange={(e)=>setPassword(e.target.value)}
-
-
-/>
-
-
-
-
-<button
-
-
-onClick={handleLogin}
-
-
-disabled={loading}
-
-
-className="w-full bg-black text-white p-3 rounded"
-
-
->
-
-
-{loading ? "Logging..." : "Login"}
-
-
-</button>
-
-
-
-<p className="text-center mt-5">
-
-
-Don't have account?
-
-
-<button
-
-
-className="text-blue-600 ml-2"
-
-
-onClick={()=>router.push("/register")}
-
-
->
-
-Register
-
-</button>
-
-
-</p>
-
-
-
-</div>
-
-
-</div>
-
-
-);
-
+  );
 
 }
