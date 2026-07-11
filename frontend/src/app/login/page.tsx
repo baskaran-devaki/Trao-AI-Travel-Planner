@@ -86,7 +86,7 @@ export default function LoginPage() {
 
             <p className="text-gray-500 mt-2">
 
-              Welcome back to Trao AI Travel Planner
+              Welcome back to Baski AI Travel Planner
 
             </p>
 
