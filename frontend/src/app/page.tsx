@@ -22,7 +22,7 @@ export default function Home() {
 
             <h1 className="text-6xl font-extrabold text-gray-900 leading-tight mt-6">
 
-              ✈️ AI Travel Planner
+              ✈️ Baski AI Travel Planner
 
             </h1>
 
