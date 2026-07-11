@@ -1,134 +1,168 @@
 "use client";
 
-
-import {useState} from "react";
+import { useState } from "react";
 import api from "@/utils/api";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
+export default function Register() {
 
-export default function Register(){
+  const router = useRouter();
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const router = useRouter();
+  const handleRegister = async () => {
 
+    try {
 
-const [name,setName]=useState("");
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+      await api.post("/auth/register", {
+        name,
+        email,
+        password
+      });
 
+      alert("Register Success");
 
+      router.push("/login");
 
-const handleRegister = async()=>{
+    }
 
+    catch (error: any) {
 
-try{
+      console.log(error);
 
+      alert(
+        error.response?.data ||
+        error.message
+      );
 
-const res = await api.post(
-"/auth/register",
-{
-name,
-email,
-password
-}
-);
+    }
 
+  };
 
-alert("Register Success");
+  return (
 
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-100 via-blue-100 to-indigo-200 px-5">
 
-router.push("/login");
+      {/* Background Image */}
 
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-20"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600')"
+        }}
+      />
 
-}
-catch(error:any){
+      <div className="relative w-full max-w-md">
 
-console.log(error);
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white p-10">
 
-alert(
-error.response?.data ||
-error.message
-);
+          <div className="text-center mb-8">
 
-}
+            <div className="text-6xl mb-3">
 
+              🌍
 
-};
+            </div>
 
+            <h1 className="text-4xl font-extrabold text-gray-800">
 
+              Create Account
 
-return (
+            </h1>
 
-<div className="min-h-screen flex items-center justify-center">
+            <p className="text-gray-500 mt-2">
 
+              Join Trao AI Travel Planner
 
-<div className="w-96 p-6 shadow-lg rounded">
+            </p>
 
+          </div>
 
-<h1 className="text-2xl font-bold mb-5">
-Create Account
-</h1>
+          <div className="space-y-5">
 
+            <input
 
+              className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-cyan-300 transition"
 
-<input
+              placeholder="Name"
 
-className="border p-2 w-full mb-3"
+              value={name}
 
-placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
 
-onChange={(e)=>setName(e.target.value)}
+            />
 
-/>
+            <input
 
+              className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-cyan-300 transition"
 
+              placeholder="Email"
 
-<input
+              value={email}
 
-className="border p-2 w-full mb-3"
+              onChange={(e) => setEmail(e.target.value)}
 
-placeholder="Email"
+            />
 
-onChange={(e)=>setEmail(e.target.value)}
+            <input
 
-/>
+              className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-cyan-300 transition"
 
+              placeholder="Password"
 
+              type="password"
 
-<input
+              value={password}
 
-className="border p-2 w-full mb-3"
+              onChange={(e) => setPassword(e.target.value)}
 
-placeholder="Password"
+            />
 
-type="password"
+            <button
 
-onChange={(e)=>setPassword(e.target.value)}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold shadow-lg hover:scale-[1.02] hover:shadow-xl transition duration-300"
 
-/>
+              onClick={handleRegister}
 
+            >
 
+              Register
 
-<button
+            </button>
 
-className="bg-black text-white px-4 py-2 w-full"
+          </div>
 
-onClick={handleRegister}
+          <div className="mt-8 text-center">
 
->
+            <p className="text-gray-600">
 
-Register
+              Already have an account?
 
-</button>
+            </p>
 
+            <button
 
+              className="mt-2 font-semibold text-blue-600 hover:text-blue-800 transition"
 
-</div>
+              onClick={() => router.push("/login")}
 
+            >
 
-</div>
+              Login
 
-);
+            </button>
 
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
 
 }
