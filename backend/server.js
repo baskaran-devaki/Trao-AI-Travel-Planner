@@ -13,7 +13,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: ["https://trao-ai-travel-planner-theta.vercel.app"],
+  origin: ["https://baski-ai-travel-planner.vercel.app"],
   credentials: true
 }));
 
@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.get("/",(req,res)=>{
 
-res.send("Trao AI Travel Planner Backend Running");
+res.send("Baski AI Travel Planner Backend Running");
 
 });
 
