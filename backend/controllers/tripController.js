@@ -33,7 +33,7 @@ const itinerary = await generateItinerary(
   destination,
   days,
   budget,
-  interests,
+  "",
   language
 );
 
