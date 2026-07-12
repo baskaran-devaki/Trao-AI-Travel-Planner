@@ -8,20 +8,14 @@ export default function CreateTripForm({
   setLatestTrip
 
 }: any) {
-  const [language, setLanguage] = useState("English");
-
+  
   const [form, setForm] = useState({
-
-    destination: "",
-
-    days: "",
-
-    budget: "",
-
-    interests: ""
-
-  });
-
+  destination: "",
+  days: "",
+  budget: "",
+  interests: "",
+  language: "English",
+});
   const handleChange = (e: any) => {
 
     setForm({
@@ -38,11 +32,7 @@ export default function CreateTripForm({
 
     try {
 
-      const res = await api.post("/trips/create", {
-  ...form,
-  language,
-});
-
+      const res = await api.post("/trips/create", form);
       console.log("CREATED TRIP:", res.data);
 
       setLatestTrip(res.data.trip || res.data);
@@ -117,15 +107,16 @@ export default function CreateTripForm({
   </label>
 
   <select
-    value={language}
-    onChange={(e) => setLanguage(e.target.value)}
-    className="w-full rounded-xl border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
-  >
-    <option>English</option>
-    <option>Tamil</option>
-    <option>Hindi</option>
-    <option>Telugu</option>
-  </select>
+  name="language"
+  value={form.language}
+  onChange={handleChange}
+  className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
+>
+  <option value="English">🇬🇧 English</option>
+  <option value="Tamil">🇮🇳 தமிழ்</option>
+  <option value="Hindi">🇮🇳 हिन्दी</option>
+  <option value="Telugu">🇮🇳 తెలుగు</option>
+</select>
 </div>
 
         <div>
