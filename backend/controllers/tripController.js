@@ -18,15 +18,11 @@ const userId = req.user.id;
 
 
 const {
-
-destination,
-
-days,
-
-budget,
-
-interests
-
+  destination,
+  days,
+  budget,
+  interests,
+  language
 } = req.body;
 
 
@@ -34,19 +30,12 @@ interests
 // AI generate
 
 const itinerary = await generateItinerary(
-
-destination,
-
-days,
-
-budget,
-
-interests
-
+  destination,
+  days,
+  budget,
+  interests,
+  language
 );
-
-
-
 
 
 const trip = await Trip.create({
