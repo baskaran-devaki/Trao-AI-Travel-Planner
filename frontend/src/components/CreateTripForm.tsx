@@ -65,6 +65,9 @@ export default function CreateTripForm({
           Plan Your Trip ✈️
 
         </h2>
+        <p className="text-red-600 text-2xl font-bold">
+VERSION 2 - LANGUAGE TEST
+</p>
 
         <p className="text-gray-500 mt-3">
 
