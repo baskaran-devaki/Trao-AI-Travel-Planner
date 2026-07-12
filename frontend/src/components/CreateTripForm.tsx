@@ -13,7 +13,6 @@ export default function CreateTripForm({
   destination: "",
   days: "",
   budget: "",
-  interests: "",
   language: "English",
 });
   const handleChange = (e: any) => {
@@ -100,24 +99,6 @@ export default function CreateTripForm({
           />
 
         </div>
-        
-        <div className="mt-5">
-  <label className="block mb-2 font-semibold">
-    🌐 Select Language
-  </label>
-
-  <select
-  name="language"
-  value={form.language}
-  onChange={handleChange}
-  className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
->
-  <option value="English">🇬🇧 English</option>
-  <option value="Tamil">🇮🇳 தமிழ்</option>
-  <option value="Hindi">🇮🇳 हिन्दी</option>
-  <option value="Telugu">🇮🇳 తెలుగు</option>
-</select>
-</div>
 
         <div>
 
@@ -197,27 +178,23 @@ export default function CreateTripForm({
 
       <div className="mt-5">
 
-        <label className="block mb-2 font-semibold text-gray-700">
+  <label className="block mb-2 font-semibold text-gray-700">
+    🌐 Language
+  </label>
 
-          Interests
+  <select
+    name="language"
+    value={form.language}
+    onChange={handleChange}
+    className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
+  >
+    <option value="English">🇬🇧 English</option>
+    <option value="Tamil">🇮🇳 தமிழ்</option>
+    <option value="Hindi">🇮🇳 हिन्दी</option>
+    <option value="Telugu">🇮🇳 తెలుగు</option>
+  </select>
 
-        </label>
-
-        <input
-
-          name="interests"
-
-          placeholder="Interests (Food, Culture, Adventure, Shopping)"
-
-          value={form.interests}
-
-          onChange={handleChange}
-
-          className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none focus:ring-4 focus:ring-blue-300 transition"
-
-        />
-
-      </div>
+</div>
 
       <button
 
